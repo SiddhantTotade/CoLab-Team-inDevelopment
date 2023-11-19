@@ -16,13 +16,18 @@ import AppAlerts from "@/components/AppAlerts";
 
 export default function LoginPage() {
   const formRef = useRef<HTMLFormElement | null>(null);
-  const { handleSubmit, control } = useForm<LoginSchema>({
+  const { handleSubmit, control, setValue } = useForm<LoginSchema>({
     resolver: yupResolver(loginSchema),
   });
   const [login] = useLoginMutation();
 
   async function onSubmit(data: LoginSchema) {
     try {
+      const response = await fetch("https://api.ipify.org?format=json");
+      const ipAddress = await response.json();
+
+      setValue("ipAddress", ipAddress.ip);
+
       await login(data);
     } catch (error) {
       console.error(error);
